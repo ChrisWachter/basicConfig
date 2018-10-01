@@ -1,0 +1,2 @@
+# basicConfig
+Bash, emacs, etc.
