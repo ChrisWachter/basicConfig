@@ -1,0 +1,55 @@
+[user]
+	email = chriswachter999@gmail.com
+	name = Chris Wachter
+
+[diff]
+    tool = kdiff3
+[difftool]
+    prompt = false
+[difftool "kdiff3"]
+    path = /usr/bin/kdiff3
+    trustExitCode = false
+[difftool "diffmerge"]
+    path = /usr/bin/diffmerge
+    trustExitCode = false
+
+[merge]
+    tool = kdiff3
+[mergetool]
+    keepBackup = false
+[mergetool "kdiff3"]
+    path = /usr/bin/kdiff3
+    trustExitCode = false
+[mergetool "diffmerge"]
+    path = /usr/bin/diffmerge
+    trustExitCode = false
+[mergetool]
+    keepBackup = false
+
+[color]
+    ui = true
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = red
+
+[alias]
+    g = !git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    churn = !git log --all -M -C --name-only --format='format:' "$@" | sort | grep -v '^$' | uniq -c | sort | awk 'BEGIN {print "count,file"} {print $1 "," $2}'
+
+[core]
+	excludesfile = /home/pi/.gitignore
+[push]
+	default = matching
