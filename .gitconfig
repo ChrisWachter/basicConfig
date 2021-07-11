@@ -1,30 +1,23 @@
 [user]
-	email = chriswachter999@gmail.com
-	name = Chris Wachter
+    email = chriswachter999@gmail.com
+    name = Chris Wachter
 
 [diff]
-    tool = kdiff3
+    tool = p4merge
 [difftool]
     prompt = false
-[difftool "kdiff3"]
-    path = /usr/bin/kdiff3
-    trustExitCode = false
-[difftool "diffmerge"]
-    path = /usr/bin/diffmerge
+[difftool "p4merge"]
+    path = /usr/local/bin/p4merge
     trustExitCode = false
 
 [merge]
-    tool = kdiff3
+    tool = p4merge
 [mergetool]
+    prompt = false
     keepBackup = false
-[mergetool "kdiff3"]
-    path = /usr/bin/kdiff3
+[mergetool "p4merge"]
+    path = /usr/local/bin/p4merge
     trustExitCode = false
-[mergetool "diffmerge"]
-    path = /usr/bin/diffmerge
-    trustExitCode = false
-[mergetool]
-    keepBackup = false
 
 [color]
     ui = true
@@ -50,6 +43,6 @@
     churn = !git log --all -M -C --name-only --format='format:' "$@" | sort | grep -v '^$' | uniq -c | sort | awk 'BEGIN {print "count,file"} {print $1 "," $2}'
 
 [core]
-	excludesfile = /home/pi/.gitignore
+    excludesfile = /home/shumberg/.gitignore
 [push]
-	default = matching
+    default = matching
