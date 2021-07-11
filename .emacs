@@ -2,38 +2,27 @@
 (setq package-archives '(("melpa-stable" . "http://stable.melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
-(package-initialize)
+
 
 (setq url-http-attempt-keepalives nil)
 
-(require 'cl)
 (defvar my-packages
-  '(auctex clojure-mode clojure-mode-extra-font-locking coffee-mode
-      deft expand-region gist haml-mode haskell-mode helm helm-projectile
-      magit markdown-mode paredit projectile elpy direx jedi
-      python sass-mode rainbow-mode rainbow-delimiters scss-mode
-      solarized-theme cyberpunk-theme multiple-cursors undo-tree
-      yaml-mode yasnippet zenburn-theme fill-column-indicator
-      smartparens dash dash-functional cider semantic minimap
-      helm-gtags helm-swoop sr-speedbar company function-args
-      company-c-headers clean-aindent-mode ws-butler move-text
-      glsl-mode dockerfile-mode csharp-mode markdown-mode
-      flycheck avy realgud)
+  '(auctex clojure-mode clojure-mode-extra-font-locking
+    deft expand-region gist haml-mode haskell-mode helm
+    magit paredit
+    python sass-mode rainbow-mode rainbow-delimiters scss-mode
+    solarized-theme cyberpunk-theme multiple-cursors undo-tree
+    yaml-mode zenburn-theme fill-column-indicator
+    smartparens dash dash-functional cider
+    helm-gtags helm-swoop sr-speedbar company function-args
+    company-c-headers clean-aindent-mode ws-butler move-text
+    glsl-mode dockerfile-mode flycheck avy realgud)
   "A list of packages to ensure are installed at launch.")
 
-(defvar my-manual-packages
-  ;;'("emacs-livedown")
-  "These are not available in a known package repository (boo).
-   Put these shitbags into ~/emacs.d")
 
-(dolist (p my-manual-packages)
-  (add-to-list 'load-path (expand-file-name (concat "~/emacs.d/" p))))
-
-;; ack-and-a-half inf-ruby volatile-highlights yari magithub
-;; nyan-mode uniquify groovy-emacs-modes
-
+(require 'cl-lib)
 (defun my-packages-installed-p ()
-  (loop for p in my-packages
+  (cl-loop for p in my-packages
         when (not (package-installed-p p)) do (return nil)
         finally (return t)))
 
@@ -44,8 +33,6 @@
   (dolist (p my-packages)
     (when (not (package-installed-p p))
       (package-install p))))
-
-;;;;(provide 'my-packages)
 
 ;;
 
@@ -207,11 +194,6 @@
     jit-lock-defer-contextually t
     jit-lock-stealth-nice 0)
 
-(global-set-key (kbd "S-M-<left>") 'shrink-window-horizontally)
-(global-set-key (kbd "S-M-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "S-M-<down>") 'shrink-window)
-(global-set-key (kbd "S-M-<up>") 'enlarge-window)
-
 (subword-mode 1)
 
 (defun shift-text (distance)
@@ -284,12 +266,6 @@
 (setq-default c-electric-flag nil)
 
 (require 'python)
-(setq py-load-pymacs-p t)
-
-;;;;(require 'groovy-mode)
-;;;;(add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
-;;;;(add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
-;;;;(add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
 
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\.yaml$" . yaml-mode))
@@ -356,7 +332,6 @@
 
 (global-prettify-symbols-mode 1) 
 
-;;(load-theme 'misterioso t)
 (load-theme 'zenburn t)
 (setq my-cur-theme 'zenburn)
 
@@ -378,47 +353,11 @@
     (toggle-theme)))
 (global-set-key (kbd "C-x C-q") 'toggle-theme-on-readonly-switch)
 
-;; (require 'powerline)
-;; (powerline-default-theme)
-
-(require 'minimap)
-;(minimap-mode t)
-(setq minimap-window-location 'right)
-(setq minimap-buffer-name " <map>")
-(setq minimap-width-fraction 0.02)
-(setq minimap-update-delay 0.025)
-(setq minimap-minimum-width 12)
-
-(set-face-attribute 'minimap-font-face nil
-                    :family "Ubuntu Mono" :height 10
-)
-(set-face-attribute 'minimap-active-region-background nil
-                    :background "#354535"
-)
-
-
-(defun toggle-minimap ()
-  (interactive)
-  (if (or (not (boundp 'minimap-exists)) (not minimap-exists))
-    (progn
-      (minimap-create)
-      (setf minimap-exists t)
-      (scroll-bar-mode -1))
-    (progn
-      (minimap-kill)
-      (setf minimap-exists nil)
-      (scroll-bar-mode 1))
-      ))
-    
-
-(global-set-key (kbd "s-<print>") 'toggle-minimap)
-
-
 (add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 140))
 
-(set-face-attribute 'default nil :family "Droid Sans Mono" :height 100)
-(set-face-attribute 'variable-pitch nil :family "Droid Serif" :height 100)
+(set-face-attribute 'default nil :family "Source Code Pro" :height 100)
+(set-face-attribute 'variable-pitch nil :family "Nimbus Sans" :height 105)
 
 ;; (set-face-attribute 'font-lock-string-face nil
 ;;                     :inherit 'variable-pitch)
@@ -600,11 +539,6 @@
 (setq global-auto-revert-non-file-buffers t)
 (setq auto-revert-verbose nil)
 
-(require 'yasnippet)
-(add-to-list 'yas-snippet-dirs "~/emacs.d/yasnippet-snippets")
-
-(yas-global-mode 1)
-
 (require 'semantic/ia)
 (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
@@ -668,25 +602,6 @@
 ;;   (add-hook hook (lambda () (linum-mode t)))
 ;; )
 
-
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:setup-keys t)
-(setq jedi:complete-on-dot nil) 
-
-(package-initialize)
-(elpy-enable)
-(setq elpy-rpc-backend "jedi")
-(setq elpy-test-runner "nose")
-(setq elpy-rpc-large-buffer-size 512)
-(remove-hook 'elpy-modules 'elpy-module-flymake)
-
-(eval-after-load "elpy"
-  '(cl-dolist (key '("M-<up>" "M-<down>" "M-<left>" "M-<right>" "C-<up>" "C-<down>" "C-<left>" "C-<right>"))
-     (define-key elpy-mode-map (kbd key) nil)))
-
-
-(require 'direx)
-(global-set-key (kbd "C-x C-j") 'direx:jump-to-directory)
 
 ;; (setq flyspell-issue-message-flag nil)
 
@@ -799,39 +714,22 @@
 
 (define-key global-map [remap list-buffers] 'helm-buffers-list)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; PACKAGE: helm-swoop                ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Locate the helm-swoop folder to your path
+
 (require 'helm-swoop)
+(global-set-key (kbd "<f1>") 'helm-swoop)
+(global-set-key (kbd "<f2>") 'helm-multi-swoop)
+(global-set-key (kbd "<f3>") 'helm-multi-swoop-all)
+(define-key isearch-mode-map (kbd "<f4>") 'helm-swoop-from-isearch)
+(define-key helm-swoop-map (kbd "<f4>") 'helm-multi-swoop-all-from-helm-swoop)
 
-;; Change the keybinds to whatever you like :)
-(global-set-key (kbd "C-c h o") 'helm-swoop)
-(global-set-key (kbd "C-c s") 'helm-multi-swoop-all)
-
-;; When doing isearch, hand the word over to helm-swoop
-(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
-
-;; From helm-swoop to helm-multi-swoop-all
-(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
-
-;; Save buffer when helm-multi-swoop-edit complete
 (setq helm-multi-swoop-edit-save t)
-
-;; If this value is t, split window inside the current window
 (setq helm-swoop-split-with-multiple-windows t)
-
-;; Split direcion. 'split-window-vertically or 'split-window-horizontally
-(setq helm-swoop-split-direction 'split-window-vertically)
-
-;; If nil, you can slightly boost invoke speed in exchange for text color
+(setq helm-swoop-split-direction 'split-window-horizontally)
 (setq helm-swoop-speed-or-color t)
 
 (helm-mode 1)
 
-;;;;(provide 'setup-helm)
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; New c-lang stuff
 (setq c-default-style "stroustrup")
@@ -888,10 +786,6 @@
 
 (require 'dockerfile-mode)
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
-
-(add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-mode))
-(require 'livedown)
-(global-set-key (kbd "C-M-m") 'livedown:preview)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -967,16 +861,6 @@
 
 (global-set-key (kbd "M-<up>") 'scroll-down-command)
 (global-set-key (kbd "M-<down>") 'scroll-up-command)
-
-(global-set-key (kbd "<f1>") 'undo)
-(global-set-key (kbd "<f2>") 'xah-cut-line-or-region) ; cut
-(global-set-key (kbd "<f3>") 'xah-copy-line-or-region) ; copy
-(global-set-key (kbd "<f4>") 'yank) ; paste
-
-(global-set-key (kbd "s-<left>") 'delete-backward-char)
-(global-set-key (kbd "s-<right>") 'delete-char)
-(global-set-key (kbd "M-s-<left>") 'backward-kill-word)
-(global-set-key (kbd "M-s-<right>") 'kill-word)
 
 (global-set-key (kbd "<delete>") 'delete-char)
 (global-set-key (kbd "M-DEL") 'backward-kill-word)
