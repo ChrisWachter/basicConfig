@@ -296,7 +296,21 @@
          ("M-A" . marginalia-cycle))
   :init
   (marginalia-mode))
-  
+
+;;
+
+(use-package nix-mode
+  :mode ("\\.nix\\'" "\\.nix.in\\'"))
+(use-package nix-drv-mode
+  :ensure nix-mode
+  :mode "\\.drv\\'")
+(use-package nix-shell
+  :ensure nix-mode
+  :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
+(use-package nix-repl
+  :ensure nix-mode
+  :commands (nix-repl))
+
 ;;;;
 
 (require 'cc-mode)
@@ -362,8 +376,8 @@
 (add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 140))
 
-(set-face-attribute 'default nil :family "Hack Nerd Font Mono" :height 100)
-(set-face-attribute 'variable-pitch nil :family "Hack Nerd Font" :height 100)
+(set-face-attribute 'default nil :family "Hack Nerd Font Mono" :height 110 :weight 'medium)
+(set-face-attribute 'variable-pitch nil :family "Hack Nerd Font" :height 110 :weight 'semi-bold)
 
 ;; (set-face-attribute 'font-lock-string-face nil
 ;;                     :inherit 'variable-pitch)
