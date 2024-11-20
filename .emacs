@@ -10,7 +10,7 @@
   '(expand-region magit paredit python rainbow-mode rainbow-delimiters
     cyberpunk-theme undo-tree zenburn-theme smartparens company function-args
     company-c-headers clean-aindent-mode ws-butler move-text flycheck avy realgud
-    )
+   )
   "A list of packages to ensure are installed at launch.")
 
 (defun my-packages-installed-p ()
@@ -240,6 +240,7 @@
 ;;;;
 
 (use-package vertico
+  :ensure t
   :custom
   (vertico-scroll-margin 0) ;; Different scroll margin
   (vertico-count 20) ;; Show more candidates
@@ -280,8 +281,8 @@
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
 (use-package orderless
+  :ensure t
   :custom
-  ;; Configure a custom style dispatcher (see the Consult wiki)
   (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
   (orderless-component-separator #'orderless-escapable-split-on-space)
   (completion-styles '(orderless basic))
