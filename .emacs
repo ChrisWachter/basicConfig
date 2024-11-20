@@ -562,6 +562,7 @@
 
 (require 'undo-tree)
 (global-undo-tree-mode)
+(setq undo-tree-auto-save-history nil)
 
 ;; Keep region when undoing in region
 (defadvice undo-tree-undo (around keep-region activate)
