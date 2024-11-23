@@ -10,6 +10,7 @@
   '(expand-region magit paredit python rainbow-mode rainbow-delimiters
     cyberpunk-theme undo-tree zenburn-theme smartparens company function-args
     company-c-headers clean-aindent-mode ws-butler move-text flycheck avy realgud
+    goto-last-change
    )
   "A list of packages to ensure are installed at launch.")
 
@@ -197,8 +198,8 @@
 (global-set-key [tab] 'shift-right)
 
 (require 'move-text)
-(global-set-key [S-C-up] 'move-text-up)
-(global-set-key [S-C-down] 'move-text-down)
+(global-set-key (kbd "M-p") 'move-text-up)
+(global-set-key (kbd "M-n") 'move-text-down)
 
 (defun open-line-below ()
   (interactive)
@@ -236,6 +237,10 @@
             (lambda ()
                   (interactive)
                   (join-line -1)))
+
+
+(require 'goto-last-change)
+(global-set-key (kbd "C-M-/") 'goto-last-change)
 
 ;;;;
 
@@ -297,6 +302,9 @@
          ("M-A" . marginalia-cycle))
   :init
   (marginalia-mode))
+
+(use-package just-mode
+  :ensure t)
 
 ;;
 
