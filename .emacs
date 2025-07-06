@@ -1,7 +1,7 @@
 (require 'package)
-(setq package-archives '(("melpa-stable" . "http://stable.melpa.org/packages/")
+(setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")))
+                         ("melpa-stable" . "http://stable.melpa.org/packages/")))
 
 
 (setq url-http-attempt-keepalives nil)
@@ -306,6 +306,9 @@
 (use-package just-mode
   :ensure t)
 
+(use-package haskell-mode
+  :ensure t)
+
 ;;
 
 (use-package nix-mode
@@ -355,7 +358,8 @@
   '(lambda ()
     (define-key clojure-mode-map (kbd "<backtab>") 'shift-left)))
 
-(add-hook 'clojure-mode-hook (lambda () (infer-indentation-style))) 
+(add-hook 'clojure-mode-hook (lambda () (infer-indentation-style)))
+
 
 ;;;;
 
