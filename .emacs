@@ -254,10 +254,10 @@
   :init
   (vertico-mode))
 
-;; Persist history over Emacs restarts. Vertico sorts by history position.
-(use-package savehist
-  :init
-  (savehist-mode))
+;; ;; Persist history over Emacs restarts. Vertico sorts by history position.
+;; (use-package savehist
+;;   :init
+;;   (savehist-mode))
 
 ;; A few more useful configurations...
 (use-package emacs
@@ -285,14 +285,16 @@
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
-(use-package orderless
+;; This is better than orderless, I think
+(use-package prescient
   :ensure t
-  :custom
-  (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
-  (orderless-component-separator #'orderless-escapable-split-on-space)
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  :custom ())
+(setq completion-preview-sort-function #'prescient-completion-sort)
+(use-package vertico-prescient
+  :ensure t
+  :custom ()
+  :init
+  (vertico-prescient-mode))
 
 (use-package marginalia
   :ensure t
@@ -302,6 +304,8 @@
          ("M-A" . marginalia-cycle))
   :init
   (marginalia-mode))
+
+;;;;;;;;
 
 (use-package just-mode
   :ensure t)
@@ -519,11 +523,10 @@
 
 (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
 
-(global-set-key (kbd "C-M-S-<left>")  'windmove-left)
-(global-set-key (kbd "C-M-S-<right>") 'windmove-right)
-(global-set-key (kbd "C-M-S-<up>")    'windmove-up)
-(global-set-key (kbd "C-M-S-<down>")  'windmove-down)
-
+(global-set-key (kbd "C-S-<left>")  'windmove-left)
+(global-set-key (kbd "C-S-<right>") 'windmove-right)
+(global-set-key (kbd "C-S-<up>")    'windmove-up)
+(global-set-key (kbd "C-S-<down>")  'windmove-down)
 
 ;; Auto refresh buffers
 (global-auto-revert-mode 1)
