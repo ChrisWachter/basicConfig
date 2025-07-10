@@ -617,7 +617,6 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-(global-set-key (kbd "M-<pause>") `toggle-window-split)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -671,9 +670,12 @@
 (global-set-key (kbd "M-1") 'delete-other-windows)
 (global-set-key (kbd "M-2") 'split-window-below)
 (global-set-key (kbd "M-3") 'split-window-right)
+(global-set-key (kbd "M-4") `toggle-window-split)
 
 (global-set-key (kbd "H-<right>") 'sp-forward-sexp)
 (global-set-key (kbd "H-<left>") 'sp-backward-sexp)
+
+(global-set-key (kbd "C-x b") 'ibuffer)
 
 (delete-selection-mode 1)
 
