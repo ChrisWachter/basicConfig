@@ -383,25 +383,36 @@
    (setq my-cur-theme 'zenburn))))
 
 (defun toggle-theme-on-readonly-switch ()
- (interactive)
-   (progn
+  (interactive)
+  (progn
     (disable-theme 'my-cur-theme)
-    (toggle-read-only)
+    (if (equal buffer-read-only nil)
+      (setq buffer-read-only t)
+      (setq buffer-read-only nil))
     (toggle-theme)))
 (global-set-key (kbd "C-x C-q") 'toggle-theme-on-readonly-switch)
 
 (add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 140))
 
+(set-face-attribute 'font-lock-comment-face nil :inherit 'variable-pitch :weight 'normal :slant 'italic)
 (set-face-attribute 'default nil :family "Hack Nerd Font Mono" :height 110 :weight 'medium)
 (set-face-attribute 'variable-pitch nil :family "Hack Nerd Font" :height 110 :weight 'semi-bold)
+(set-face-attribute 'mode-line nil :family "Hack Nerd Font" :height 90 :weight 'semi-bold)
+(set-face-attribute 'mode-line-inactive nil :family "Hack Nerd Font" :height 90 :weight 'extra-light :slant 'italic)
+
+;;;;; Can't get this working yet. WANT
+;; (defun my-minibuffer-setup-hook ()
+;;   (with-current-buffer (get-buffer " *Echo Area 0*")
+;;     (face-remap-add-relative 'default '(:height 0.5 :weight 'medium)))
+;;   (with-current-buffer (get-buffer " *Echo Area 1*")
+;;     (face-remap-add-relative 'default '(:height 0.5 :weight 'medium))))
+
+;; (add-hook 'minibuffer-setup-hook 'my-minibuffer-setup-hook)
 
 ;; (set-face-attribute 'font-lock-string-face nil
 ;;                     :inherit 'variable-pitch)
 
-(set-face-attribute 'font-lock-comment-face nil
-                    :inherit 'variable-pitch
-                    :slant 'italic)
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (setq flycheck-help-echo-function nil)
