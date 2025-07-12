@@ -1,3 +1,7 @@
+;;; .emacs --- Init file for Emacs -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Emacs Startup File --- initialization for Emacs (this is to shut up flycheck, btw)
+
 (require 'package)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
@@ -326,6 +330,39 @@
 (use-package nix-repl
   :ensure nix-mode
   :commands (nix-repl))
+
+;;;;
+
+(use-package sqlite-mode 
+  :config
+  (defun ct/sqlite-view-file-magically ()
+    "Runs `sqlite-mode-open-file' on the file name visited by the current buffer, killing it."
+    (require 'sqlite-mode)
+    (let ((file-name buffer-file-name))
+      (kill-current-buffer)
+      (sqlite-mode-open-file file-name)))
+
+  (add-to-list 'magic-mode-alist '("SQLite format 3\x00" . ct/sqlite-view-file-magically)))
+
+(use-package sqlite-mode-extras
+  :ensure t
+  :hook ((sqlite-mode . sqlite-extras-minor-mode))
+  :bind (:map
+         sqlite-mode-map
+         ("n" . next-line)
+         ("p" . previous-line)
+         ("b" . sqlite-mode-extras-backtab-dwim)
+         ("f" . sqlite-mode-extras-tab-dwim)
+         ("+" . sqlite-mode-extras-add-row)
+         ("D" . sqlite-mode-extras-delete-row-dwim)
+         ("C" . sqlite-mode-extras-compose-and-execute)
+         ("E" . sqlite-mode-extras-execute)
+         ("S" . sqlite-mode-extras-execute-and-display-select-query)
+         ("DEL" . sqlite-mode-extras-delete-row-dwim)
+         ("g" . sqlite-mode-extras-refresh)
+         ("<backtab>" . sqlite-mode-extras-backtab-dwim)
+         ("<tab>" . sqlite-mode-extras-tab-dwim)
+         ("RET" . sqlite-mode-extras-ret-dwim)))
 
 ;;;;
 
