@@ -174,7 +174,7 @@
     jit-lock-defer-contextually t
     jit-lock-stealth-nice 0)
 
-(subword-mode 1)
+(global-subword-mode 1)
 
 (defun shift-text (distance)
   (if (use-region-p)
@@ -454,11 +454,6 @@
  '(my-space-face ((((class color)) (:foreground "#555555"))) t)
  '(my-tab-face ((((class color)) (:foreground "#308030"))) t))
 
-(require 'whitespace)
-(set-face-attribute 'whitespace-line nil
-                    :box "#660000"
-                    :foreground "#FFFFDD")
-
 (add-hook 'font-lock-mode-hook
  (function
   (lambda ()
@@ -471,7 +466,7 @@
       ))))))
 
 (global-whitespace-mode t)
-(setq whitespace-style '(face space space-mark tab tab-mark newline newline-mark lines-tail))
+(setq whitespace-style '(face empty spaces space-mark tabs tab-mark newline newline-mark trailing))
 (setq whitespace-display-mappings ;; http://ergoemacs.org/emacs/whitespace-mode.html
  '(
    (space-mark 32 [183] [46])
