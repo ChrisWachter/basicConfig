@@ -430,11 +430,11 @@
 (add-to-list 'default-frame-alist '(width . 140))
 
 (defun my-basic-faces-setup-hook ()
-  (face-remap-add-relative 'variable-pitch nil :family "Hack Nerd Font" :height 110 :weight 'semi-bold)
+  (face-remap-add-relative 'variable-pitch :family "Hack Nerd Font" :height 110 :weight 'semi-bold)
   (face-remap-add-relative 'font-lock-comment-face :inherit 'variable-pitch :weight 'normal :slant 'italic)
-  (face-remap-add-relative 'default nil :family "Hack Nerd Font Mono" :height 110 :weight 'medium)
-  (face-remap-add-relative 'mode-line nil :family "Hack Nerd Font" :height 90 :weight 'semi-bold)
-  (face-remap-add-relative 'mode-line-inactive nil :family "Hack Nerd Font" :height 90 :weight 'extra-light :slant 'italic))
+  (face-remap-add-relative 'default :family "Hack Nerd Font Mono" :height 110 :weight 'medium)
+  (face-remap-add-relative 'mode-line :family "Hack Nerd Font" :height 90 :weight 'semi-bold)
+  (face-remap-add-relative 'mode-line-inactive :family "Hack Nerd Font" :height 90 :weight 'extra-light :slant 'italic))
 
 (add-hook 'font-lock-mode-hook 'my-basic-faces-setup-hook)
 
