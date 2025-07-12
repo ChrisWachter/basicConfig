@@ -46,10 +46,11 @@
 (setq column-number-mode t)
 (setq size-indication-mode t)
 (line-number-mode 1)
-(global-hl-line-mode +1)
 (setq subword-mode t)
 (setq inhibit-startup-message t)
 (put 'narrow-to-region 'disabled nil)
+
+(global-hl-line-mode +1)
 
 (avy-setup-default)
 (global-set-key (kbd "M-C-:") 'avy-goto-line)
@@ -142,8 +143,6 @@
 (add-hook 'c-mode-common-hook 'ws-butler-mode)
 
 (defun how-many-region (begin end regexp &optional interactive)
-  "Print number of non-trivial matches for REGEXP in region.
-    Non-interactive arguments are Begin End Regexp"
   (interactive "r\nsHow many matches for (regexp): \np")
   (let ((count 0) opoint)
     (save-excursion
@@ -302,8 +301,6 @@
 
 (use-package marginalia
   :ensure t
-  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
-  ;; available in the *Completions* buffer, add it to the `completion-list-mode-map'.
   :bind (:map minibuffer-local-map
          ("M-A" . marginalia-cycle))
   :init
@@ -432,24 +429,14 @@
 (add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 140))
 
-(set-face-attribute 'font-lock-comment-face nil :inherit 'variable-pitch :weight 'normal :slant 'italic)
-(set-face-attribute 'default nil :family "Hack Nerd Font Mono" :height 110 :weight 'medium)
-(set-face-attribute 'variable-pitch nil :family "Hack Nerd Font" :height 110 :weight 'semi-bold)
-(set-face-attribute 'mode-line nil :family "Hack Nerd Font" :height 90 :weight 'semi-bold)
-(set-face-attribute 'mode-line-inactive nil :family "Hack Nerd Font" :height 90 :weight 'extra-light :slant 'italic)
+(defun my-basic-faces-setup-hook ()
+  (face-remap-add-relative 'variable-pitch nil :family "Hack Nerd Font" :height 110 :weight 'semi-bold)
+  (face-remap-add-relative 'font-lock-comment-face :inherit 'variable-pitch :weight 'normal :slant 'italic)
+  (face-remap-add-relative 'default nil :family "Hack Nerd Font Mono" :height 110 :weight 'medium)
+  (face-remap-add-relative 'mode-line nil :family "Hack Nerd Font" :height 90 :weight 'semi-bold)
+  (face-remap-add-relative 'mode-line-inactive nil :family "Hack Nerd Font" :height 90 :weight 'extra-light :slant 'italic))
 
-;;;;; Can't get this working yet. WANT
-;; (defun my-minibuffer-setup-hook ()
-;;   (with-current-buffer (get-buffer " *Echo Area 0*")
-;;     (face-remap-add-relative 'default '(:height 0.5 :weight 'medium)))
-;;   (with-current-buffer (get-buffer " *Echo Area 1*")
-;;     (face-remap-add-relative 'default '(:height 0.5 :weight 'medium))))
-
-;; (add-hook 'minibuffer-setup-hook 'my-minibuffer-setup-hook)
-
-;; (set-face-attribute 'font-lock-string-face nil
-;;                     :inherit 'variable-pitch)
-
+(add-hook 'font-lock-mode-hook 'my-basic-faces-setup-hook)
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (setq flycheck-help-echo-function nil)
@@ -483,19 +470,14 @@
        ("\\<\\(FIX\\(ME\\)?\\|TODO\\|OPTIMIZE\\|HACK\\|REFACTOR\\):" (0 font-lock-warning-face t))
       ))))))
 
-(setq whitespace-line-column 161)
+(global-whitespace-mode t)
 (setq whitespace-style '(face space space-mark tab tab-mark newline newline-mark lines-tail))
-
-(setq
- whitespace-display-mappings ;; http://ergoemacs.org/emacs/whitespace-mode.html
+(setq whitespace-display-mappings ;; http://ergoemacs.org/emacs/whitespace-mode.html
  '(
    (space-mark 32 [183] [46])
    (newline-mark 10 [9166 10])
    (tab-mark 9 [9655 9] [92 9])
    ))
-
-(global-whitespace-mode t)
-
 
 (require 'smartparens)
 (require 'smartparens-config)
@@ -509,15 +491,9 @@
 (add-hook 'c-mode-common-hook 'rainbow-delimiters-mode)
 (add-hook 'sh-mode-hook 'rainbow-delimiters-mode)
 
-(add-to-list 'auto-mode-alist '("\.py$" . python-mode))
-(add-to-list 'interpreter-mode-alist '("python" . python-mode))
-
-(set-face-attribute 'rainbow-delimiters-unmatched-face nil
-                    :weight 'bold
-                    :box "#00FF00"
-                    :foreground '"red"
-                    :inherit 'error
-                    :strike-through t)
+(defun my-rainbow-delimiters-setup-hook ()
+  (face-remap-add-relative 'rainbow-delimiters-unmatched-face :inherit 'error :weight 'bold :box "#00FF00" :foreground '"red" :strike-through t))
+(add-hook 'font-lock-mode-hook 'my-rainbow-delimiters-setup-hook)
 
 (defvar my-paren-dual-colors
   '("#f25e40" "#a7d52a"))
@@ -533,6 +509,11 @@
   '("" invocation-name ": "(:eval (if (buffer-file-name)
                 (abbreviate-file-name (buffer-file-name))
                   "%b"))))
+
+;;;;;;;;;;;;;;;
+
+(add-to-list 'auto-mode-alist '("\.py$" . python-mode))
+(add-to-list 'interpreter-mode-alist '("python" . python-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
