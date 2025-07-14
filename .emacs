@@ -699,7 +699,8 @@
 (global-set-key (kbd "H-<right>") 'sp-forward-sexp)
 (global-set-key (kbd "H-<left>") 'sp-backward-sexp)
 
-(global-set-key (kbd "C-x b") 'ibuffer)
+(global-set-key (kbd "C-x b") 'ibuffer)    ;; yup
+(global-set-key (kbd "C-x C-b") 'ibuffer)  ;; I am dumb
 (global-set-key (kbd "C-x B") 'switch-to-buffer)
 
 (delete-selection-mode 1)
