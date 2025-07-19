@@ -5,7 +5,8 @@
 (require 'package)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("melpa-stable" . "http://stable.melpa.org/packages/")))
+                         ("melpa-stable" . "http://stable.melpa.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
 
 (setq url-http-attempt-keepalives nil)
@@ -405,6 +406,13 @@
 
 (load-theme 'zenburn t)
 (setq my-cur-theme 'zenburn)
+
+(use-package auto-dim-other-buffers
+  :ensure t)
+
+(add-hook 'after-init-hook (lambda ()
+  (when (fboundp 'auto-dim-other-buffers-mode)
+    (auto-dim-other-buffers-mode t))))
 
 (defun toggle-theme ()
  (interactive)
