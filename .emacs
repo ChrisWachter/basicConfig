@@ -138,10 +138,10 @@
 (setq-default c-basic-offset 4)
 (setq-default tab-stop-list (number-sequence 4 200 4))
 
-(require 'clean-aindent-mode)
-(add-hook 'prog-mode-hook 'clean-aindent-mode)
-(require 'ws-butler)
-(add-hook 'c-mode-common-hook 'ws-butler-mode)
+;; (require 'clean-aindent-mode)
+;; (add-hook 'prog-mode-hook 'clean-aindent-mode)
+;; (require 'ws-butler)
+;; (add-hook 'c-mode-common-hook 'ws-butler-mode)
 
 (defun how-many-region (begin end regexp &optional interactive)
   (interactive "r\nsHow many matches for (regexp): \np")
@@ -361,6 +361,29 @@
          ("<backtab>" . sqlite-mode-extras-backtab-dwim)
          ("<tab>" . sqlite-mode-extras-tab-dwim)
          ("RET" . sqlite-mode-extras-ret-dwim)))
+
+(use-package ledger-mode
+  :ensure t
+  :custom
+  ((ledger-binary-path "hledger")
+   (ledger-mode-should-check-version nil)
+   (ledger-report-auto-width nil)
+   (ledger-report-links-in-register nil)
+   (ledger-report-native-highlighting-arguments '("--color=always")))
+  :mode ("\\.hledger\\'" "\\.ledger\\'" "\\.journal\\'")
+  :init
+    (setq ledger-binary-path "hledger.sh")
+    (setq ledger-default-date-string "%Y-%m-%d"))
+
+(use-package flycheck-ledger
+  :ensure t
+  :after ledger-mode flycheck
+  ;; :demand t
+  :custom
+  (flycheck-hledger-strict t) 
+  (flycheck-hledger-checks '("ordereddates" "recentassertions"))  ; extra checks from https://hledger.org/hledger.html#check: ordereddates, uniqueleafnames, payees, recentassertions, tags..
+  (flycheck-hledger-executable "hledger"))
+
 
 ;;;;
 
