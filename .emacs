@@ -307,7 +307,12 @@
   :init
   (marginalia-mode))
 
-;;;;;;;;
+(use-package caser
+  :ensure t
+  :bind (("M-5" . caser-camelcase-dwim)
+         ("M-6" . caser-upper-camelcase-dwim)
+         ("M-7" . caser-snakecase-dwim)
+         ("M-8" . caser-dashcase-dwim)))
 
 (use-package just-mode
   :ensure t)
