@@ -231,7 +231,7 @@
       (forward-line (1- arg))))
 
   (let ((orig-point (point)))
-    (back-to-indentation)
+    (back-to-indentation)    
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
@@ -321,6 +321,106 @@
   :ensure t)
 
 ;;
+(use-package consult
+  :ensure t
+  :bind (;; C-c bindings in `mode-specific-map'
+         ("C-c M-x" . consult-mode-command)
+         ("C-c h" . consult-history)
+         ("C-c k" . consult-kmacro)
+         ("C-c m" . consult-man)
+         ("C-c i" . consult-info)
+         ([remap Info-search] . consult-info)
+         ;; C-x bindings in `ctl-x-map'
+         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ;; M-g bindings in `goto-map'
+         ("M-g e" . consult-compile-error)
+         ("M-g r" . consult-grep-match)
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings in `search-map'
+         ("M-s f" . consult-fd)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ("M-s ." . consult-line-thing-at-point)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+
+  ;; Tweak the register preview for `consult-register-load',
+  ;; `consult-register-store' and the built-in commands.  This improves the
+  ;; register formatting, adds thin separator lines, register sorting and hides
+  ;; the window mode line.
+  (advice-add #'register-preview :override #'consult-register-window)
+  (setq register-preview-delay 0.5)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key "M-.")
+  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.05 any)
+   consult-ripgrep consult-git-grep consult-grep consult-man
+   consult-bookmark consult-recent-file consult-xref
+   consult-source-bookmark consult-source-file-register
+   consult-source-recent-file consult-source-project-recent-file
+   ;; :preview-key "M-."
+   :preview-key '(:debounce 0.4 any)
+   consult-line :add-history (seq-some #'thing-at-point '(region symbol)))
+
+  (defalias 'consult-line-thing-at-point 'consult-line)
+  (consult-customize
+   consult-line-thing-at-point :initial (thing-at-point 'symbol))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; "C-+"
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+)
+
+
+
+;;
 
 (use-package nix-mode
   :mode ("\\.nix\\'" "\\.nix.in\\'"))
@@ -389,7 +489,12 @@
   (flycheck-hledger-checks '("ordereddates" "recentassertions"))  ; extra checks from https://hledger.org/hledger.html#check: ordereddates, uniqueleafnames, payees, recentassertions, tags..
   (flycheck-hledger-executable "hledger"))
 
-
+(use-package project
+  :ensure t
+  :custom
+  ((vc-handled-backends nil)
+   (project-vc-extra-root-markers '(".projectile" ".git"))
+   (project-mode-line t)))
 ;;;;
 
 (require 'cc-mode)
@@ -466,11 +571,11 @@
 (add-to-list 'default-frame-alist '(width . 140))
 
 (defun my-basic-faces-setup-hook ()
-  (face-remap-add-relative 'variable-pitch :family "Hack Nerd Font" :height 110 :weight 'semi-bold)
+  (face-remap-add-relative 'variable-pitch :family "Victor Nerd Font" :height 90 :weight 'semi-bold)
   (face-remap-add-relative 'font-lock-comment-face :inherit 'variable-pitch :weight 'normal :slant 'italic)
-  (face-remap-add-relative 'default :family "Hack Nerd Font Mono" :height 110 :weight 'medium)
-  (face-remap-add-relative 'mode-line :family "Hack Nerd Font" :height 90 :weight 'semi-bold)
-  (face-remap-add-relative 'mode-line-inactive :family "Hack Nerd Font" :height 90 :weight 'extra-light :slant 'italic))
+  (face-remap-add-relative 'default :family "VictorMono Nerd Font" :height 90 :weight 'semi-bold)
+  (face-remap-add-relative 'mode-line :family "Hack Nerd Font" :height 80 :weight 'semi-bold)
+  (face-remap-add-relative 'mode-line-inactive :family "Hack Nerd Font" :height 80 :weight 'extra-light :slant 'italic))
 
 (add-hook 'font-lock-mode-hook 'my-basic-faces-setup-hook)
 
@@ -682,40 +787,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun xah-cut-line-or-region ()
-  "Cut the current line, or current text selection."
-  (interactive)
-  (if (region-active-p)
-      (kill-region (region-beginning) (region-end))
-    (kill-region (line-beginning-position) (line-beginning-position 2)) ) )
-
-(defun xah-copy-line-or-region ()
-  "Copy current line, or current text selection."
-  (interactive)
-  (if (region-active-p)
-      (kill-ring-save (region-beginning) (region-end))
-    (kill-ring-save (line-beginning-position) (line-beginning-position 2)) ) )
-
-(defun goto-line-and-recenter ()
-  (interactive)
-  (unwind-protect
-      (progn
-        (global-display-line-numbers-mode 1)
-        (goto-line (read-number "Recenter on which line? "))
-        (recenter))
-    (global-display-line-numbers-mode -1)))
-(global-set-key (kbd "M-g") 'goto-line-and-recenter)
-
-;;;;;;;;
-
-(global-set-key (kbd "M-<up>") 'scroll-down-command)
-(global-set-key (kbd "M-<down>") 'scroll-up-command)
-
 (global-set-key (kbd "<delete>") 'delete-char)
 (global-set-key (kbd "M-DEL") 'backward-kill-word)
 (global-set-key (kbd "M-<delete>") 'kill-word)
 
-(global-set-key (kbd "M-/") 'hippie-expand)
+;; (global-set-key (kbd "M-/") 'hippie-expand)
 
 (define-key isearch-mode-map [next] 'isearch-repeat-forward)
 (define-key isearch-mode-map [prior] 'isearch-repeat-backward)
@@ -737,9 +813,9 @@
 (global-set-key (kbd "H-<right>") 'sp-forward-sexp)
 (global-set-key (kbd "H-<left>") 'sp-backward-sexp)
 
-(global-set-key (kbd "C-x b") 'ibuffer)    ;; yup
-(global-set-key (kbd "C-x C-b") 'ibuffer)  ;; I am dumb
-(global-set-key (kbd "C-x B") 'switch-to-buffer)
+;;(global-set-key (kbd "C-x b") 'ibuffer)    ;; yup
+;;(global-set-key (kbd "C-x C-b") 'ibuffer)  ;; I am dumb
+;;(global-set-key (kbd "C-x B") 'switch-to-buffer)
 
 (delete-selection-mode 1)
 
