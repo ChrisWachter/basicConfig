@@ -13,7 +13,8 @@
 
 (defvar my-packages
   '(expand-region magit paredit python rainbow-mode rainbow-delimiters
-    cyberpunk-theme undo-tree zenburn-theme smartparens company function-args
+    cyberpunk-theme zenburn-theme sourcerer-theme clues-theme
+    undo-tree smartparens company function-args
     company-c-headers clean-aindent-mode ws-butler move-text flycheck avy realgud
     goto-last-change
    )
@@ -108,10 +109,7 @@
 
 (menu-bar-mode -1) 
 (tool-bar-mode -1)
-;;(toggle-scroll-bar 1)
 (scroll-bar-mode -1)  ;; Just gross on WSL2
-;;(setq scroll-bar-mode 'right) 
-;;(menu-bar-mode -99)
 
 (setq blink-matching-delay 0.025)
 
@@ -137,11 +135,6 @@
 (setq-default tab-width 4)
 (setq-default c-basic-offset 4)
 (setq-default tab-stop-list (number-sequence 4 200 4))
-
-;; (require 'clean-aindent-mode)
-;; (add-hook 'prog-mode-hook 'clean-aindent-mode)
-;; (require 'ws-butler)
-;; (add-hook 'c-mode-common-hook 'ws-butler-mode)
 
 (defun how-many-region (begin end regexp &optional interactive)
   (interactive "r\nsHow many matches for (regexp): \np")
@@ -333,6 +326,7 @@
          ;; C-x bindings in `ctl-x-map'
          ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
          ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x C-b" . consult-buffer)              ;; I am sloppy
          ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
          ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
          ;; Custom M-# bindings for fast register access
@@ -418,9 +412,23 @@
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
 )
 
+;;;;
 
+(use-package embark
+  :ensure t
+  :bind (("C-." . embark-act)
+         ("C-`" . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command))
 
-;;
+(use-package embark-consult
+  :ensure t
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
+
+(keymap-set minibuffer-local-map "C-k" "C-. k")
+
+;;;;
 
 (use-package nix-mode
   :mode ("\\.nix\\'" "\\.nix.in\\'"))
@@ -537,8 +545,8 @@
 
 (global-prettify-symbols-mode 1) 
 
-(load-theme 'zenburn t)
-(setq my-cur-theme 'zenburn)
+(load-theme 'clues t)
+(setq my-cur-theme 'clues)
 
 (use-package auto-dim-other-buffers
   :ensure t)
@@ -554,8 +562,8 @@
       (load-theme 'cyberpunk t)
       (setq my-cur-theme 'cyberpunk))
   (progn
-   (load-theme 'zenburn t)
-   (setq my-cur-theme 'zenburn))))
+   (load-theme 'clues t)
+   (setq my-cur-theme 'clues))))
 
 (defun toggle-theme-on-readonly-switch ()
   (interactive)
@@ -571,9 +579,9 @@
 (add-to-list 'default-frame-alist '(width . 140))
 
 (defun my-basic-faces-setup-hook ()
-  (face-remap-add-relative 'variable-pitch :family "Victor Nerd Font" :height 90 :weight 'semi-bold)
+  (face-remap-add-relative 'variable-pitch :family "Victor Nerd Font" :height 110 :weight 'semi-bold)
   (face-remap-add-relative 'font-lock-comment-face :inherit 'variable-pitch :weight 'normal :slant 'italic)
-  (face-remap-add-relative 'default :family "VictorMono Nerd Font" :height 90 :weight 'semi-bold)
+  (face-remap-add-relative 'default :family "VictorMono Nerd Font" :height 110 :weight 'semi-bold)
   (face-remap-add-relative 'mode-line :family "Hack Nerd Font" :height 80 :weight 'semi-bold)
   (face-remap-add-relative 'mode-line-inactive :family "Hack Nerd Font" :height 80 :weight 'extra-light :slant 'italic))
 
@@ -604,6 +612,8 @@
        ("\t" (0 'my-tab-face t))
        (" " (0 'my-space-face t))
        ("\\<\\(FIX\\(ME\\)?\\|TODO\\|OPTIMIZE\\|HACK\\|REFACTOR\\):" (0 font-lock-warning-face t))
+       ("\\<\\(INFO\\):" (0 font-lock-info-face t))
+       ("\\<\\(WARN\\):" (0 font-lock-warning-face t))
       ))))))
 
 (global-whitespace-mode t)
@@ -813,12 +823,6 @@
 (global-set-key (kbd "H-<right>") 'sp-forward-sexp)
 (global-set-key (kbd "H-<left>") 'sp-backward-sexp)
 
-;;(global-set-key (kbd "C-x b") 'ibuffer)    ;; yup
-;;(global-set-key (kbd "C-x C-b") 'ibuffer)  ;; I am dumb
-;;(global-set-key (kbd "C-x B") 'switch-to-buffer)
-
 (delete-selection-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
