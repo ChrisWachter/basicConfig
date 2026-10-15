@@ -351,7 +351,8 @@
          ("M-s L" . consult-line-multi)
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
-         ("M-s ." . consult-line-thing-at-point)
+         ("M-s >" . consult-line-thing-at-point)
+         ("M-s ." . consult-ripgrep-thing-at-point)
          ;; Isearch integration
          ("M-s e" . consult-isearch-history)
          :map isearch-mode-map
@@ -402,6 +403,9 @@
   (defalias 'consult-line-thing-at-point 'consult-line)
   (consult-customize
    consult-line-thing-at-point :initial (thing-at-point 'symbol))
+  (defalias 'consult-ripgrep-thing-at-point 'consult-ripgrep)
+  (consult-customize
+   consult-ripgrep-thing-at-point :initial (thing-at-point 'symbol))
 
   ;; Optionally configure the narrowing key.
   ;; Both < and C-+ work reasonably well.
@@ -416,7 +420,7 @@
 
 (use-package embark
   :ensure t
-  :bind (("C-." . embark-act)
+  :bind (("C-." . embark-act).
          ("C-`" . embark-dwim)
          ("C-h B" . embark-bindings))
   :init
