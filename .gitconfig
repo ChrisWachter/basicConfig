@@ -3,21 +3,19 @@
     name = Chris Wachter
 
 [diff]
-    tool = p4merge
+    tool = difftastic
 [difftool]
     prompt = false
-[difftool "p4merge"]
-    path = /usr/local/bin/p4merge
-    trustExitCode = false
+[difftool "difftastic"]
+    cmd = difft $LOCAL $REMOTE
 
 [merge]
-    tool = p4merge
+    tool = kdiff3
 [mergetool]
     prompt = false
     keepBackup = false
-[mergetool "p4merge"]
-    path = /usr/local/bin/p4merge
-    trustExitCode = false
+[mergetool "kdiff3"]
+    cmd = kdiff3 $BASE $LOCAL $REMOTE -o $MERGED
 
 [color]
     ui = true
