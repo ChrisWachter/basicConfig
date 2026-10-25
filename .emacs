@@ -457,7 +457,8 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 
   (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
-  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
+  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
+  :init (setq ghostel-readonly-fast-exit nil))
 
 (use-package ghostel-comint
   :hook (after-init . ghostel-comint-global-mode))
