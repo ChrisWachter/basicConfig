@@ -598,7 +598,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 
 ;;;;
 
-(global-prettify-symbols-mode 1) 
+(global-prettify-symbols-mode 1)
 
 (load-theme 'clues t)
 (setq my-cur-theme 'clues)
@@ -655,7 +655,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
  '(flycheck-fringe-warning ((((class color)) (:background "#CCCC00" :foreground "#000000")))))
 
 (custom-set-faces
- '(my-space-face ((((class color)) (:foreground "#555555"))) t)
+ '(my-space-face ((((class color)) (:foreground "#444444"))) t)
  '(my-tab-face ((((class color)) (:foreground "#308030"))) t))
 
 (add-hook 'font-lock-mode-hook
@@ -672,6 +672,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
       ))))))
 
 (global-whitespace-mode t)
+(setq whitespace-global-modes '(not ghostel-mode))
 (setq whitespace-style '(face empty spaces space-mark tabs tab-mark newline newline-mark trailing))
 (setq whitespace-display-mappings ;; http://ergoemacs.org/emacs/whitespace-mode.html
  '(
