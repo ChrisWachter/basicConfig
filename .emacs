@@ -8,15 +8,13 @@
                          ("melpa-stable" . "http://stable.melpa.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-
 (setq url-http-attempt-keepalives nil)
 
 (defvar my-packages
   '(expand-region magit paredit python rainbow-mode rainbow-delimiters
     cyberpunk-theme zenburn-theme sourcerer-theme clues-theme
-    undo-tree smartparens company function-args
-    company-c-headers clean-aindent-mode ws-butler move-text flycheck avy realgud
-    goto-last-change
+    undo-tree company function-args company-c-headers
+    clean-aindent-mode ws-butler flycheck avy realgud
    )
   "A list of packages to ensure are installed at launch.")
 
@@ -62,9 +60,9 @@
 (global-hl-line-mode +1)
 
 (avy-setup-default)
-(global-set-key (kbd "M-C-:") 'avy-goto-line)
+;; (global-set-key (kbd "M-C-:") 'avy-goto-line)
 (global-set-key (kbd "C-:") 'avy-goto-word-1)
-(global-set-key (kbd "M-:") 'avy-goto-char)
+(global-set-key (kbd "M-:") 'avy-goto-char-2)
 
 (unless (fboundp 'cua-replace-region)
   (defun cua-replace-region ()
@@ -108,13 +106,13 @@
     (overwrite-mode
       (set-cursor-color overwrite-color)
       (setq cursor-type overwrite-cursor-type))
-    (t 
+    (t
       (set-cursor-color normal-color)
       (setq cursor-type normal-cursor-type))))
 
 (add-hook 'post-command-hook 'set-cursor-according-to-mode)
 
-(menu-bar-mode -1) 
+(menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)  ;; Just gross on WSL2
 
@@ -123,7 +121,7 @@
 (setq cua-enable-cua-keys nil) ;; only for rectangles
 (cua-mode t)
 (setq cua-auto-tabify-rectangles nil)
-(setq cua-keep-region-after-copy t) 
+(setq cua-keep-region-after-copy t)
 
 (setq transient-mark-mode 1)
 (setq set-mark-command-repeat-pop 1)
@@ -201,10 +199,6 @@
 (global-set-key [backtab] 'shift-left)
 (global-set-key [tab] 'shift-right)
 
-(require 'move-text)
-(global-set-key (kbd "M-p") 'move-text-up)
-(global-set-key (kbd "M-n") 'move-text-down)
-
 (defun open-line-below ()
   (interactive)
   (end-of-line)
@@ -241,10 +235,6 @@
             (lambda ()
                   (interactive)
                   (join-line -1)))
-
-
-(require 'goto-last-change)
-(global-set-key (kbd "C-M-/") 'goto-last-change)
 
 ;;;;
 
@@ -291,14 +281,15 @@
 
 ;; This is better than orderless, I think
 (use-package prescient
-  :ensure t
-  :custom ())
+  :ensure t)
 (setq completion-preview-sort-function #'prescient-completion-sort)
+
 (use-package vertico-prescient
   :ensure t
-  :custom ()
   :init
-  (vertico-prescient-mode))
+  (vertico-prescient-mode)
+  :config
+  (setq vertico-prescient-override-sorting t))
 
 (use-package marginalia
   :ensure t
@@ -457,6 +448,14 @@
 
 ;;;;
 
+(use-package move-text
+  :ensure t
+  :bind
+  (("M-p" . move-text-up)
+   ("M-n" . move-text-down)))
+
+;;;;
+
 (use-package ghostel
   :ensure t
   :bind (("C-x m" . ghostel)
@@ -581,29 +580,33 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   ((vc-handled-backends nil)
    (project-vc-extra-root-markers '(".projectile" ".git"))
    (project-mode-line t)))
-;;;;
+
+(use-package smartparens
+  :ensure t
+  :config
+  (require 'smartparens-config)
+  (smartparens-global-mode t)
+  (show-smartparens-global-mode t)
+  (setq sp-autoescape-string-quote nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'cc-mode)
 (setq c-basic-offset 4)
 (setq-default c-electric-flag nil)
-
-(require 'python)
-
 (add-to-list 'c-mode-common-hook
   (lambda () (setq c-syntactic-indentation nil)))
 (define-key c-mode-base-map (kbd "RET") 'newline-and-indent)
 
 (add-hook 'c-mode-common-hook (lambda () (infer-indentation-style))) 
 
-
+(require 'python)
 (add-hook 'python-mode-hook
   '(lambda ()
     (define-key python-mode-map "\C-m" 'newline-and-indent)))
-
 (add-hook 'python-mode-hook
   '(lambda ()
     (define-key python-mode-map (kbd "<backtab>") 'shift-left)))
-
 (add-hook 'python-mode-hook (lambda () (infer-indentation-style))) 
 
 (add-hook 'yaml-mode-hook (lambda () (infer-indentation-style))) 
@@ -611,13 +614,10 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 (add-hook 'clojure-mode-hook
   '(lambda ()
     (define-key clojure-mode-map "\C-m" 'newline-and-indent)))
-
 (add-hook 'clojure-mode-hook
   '(lambda ()
     (define-key clojure-mode-map (kbd "<backtab>") 'shift-left)))
-
 (add-hook 'clojure-mode-hook (lambda () (infer-indentation-style)))
-
 
 ;;;;
 
@@ -703,12 +703,6 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
    (newline-mark 10 [9166 10])
    (tab-mark 9 [9655 9] [92 9])
    ))
-
-(require 'smartparens)
-(require 'smartparens-config)
-(smartparens-global-mode t)
-(show-smartparens-global-mode t)
-(setq sp-autoescape-string-quote nil)
 
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
