@@ -408,12 +408,28 @@
    consult-ripgrep-thing-at-point :initial (thing-at-point 'symbol))
 
   ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
   (setq consult-narrow-key "<") ;; "C-+"
 
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+  (setq consult-buffer-sources
+        '(consult-source-hidden-buffer 
+          consult-source-modified-buffer
+          consult-source-buffer
+          (:name     "Ephemeral"
+           :narrow   ?e
+           :category buffer
+           :state    consult--buffer-state
+           :items    ("*Messages*" "*scratch*" "*Async-native-compile-log*" "*Bookmark List*" "*Backtrace*"))))
+
+  (setq consult-buffer-filter
+    '("\\` "
+      "\\`\\*Completions\\*\\'"
+      "\\`\\*scratch\\*\\'"
+      "\\`\\*Messages\\*\\'"
+      "\\`\\*Async-native-compile-log\\*\\'"
+      "\\`\\*Bookmark List\\*\\'"
+      "\\`\\*Flymake log\\*\\'"
+      "\\`\\*Backtrace\\*\\'"
+      "\\`\\*tramp/.*\\*\\'"))
 )
 
 ;;;;
