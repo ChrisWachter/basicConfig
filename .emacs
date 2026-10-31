@@ -38,6 +38,13 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Stop the infuriating close other windows behavior of keyboard-esc-quit
+(require 'cl-lib)
+(defun my-keyboard-escape-quit (fun &rest args)
+  (cl-letf (((symbol-function 'one-window-p) (lambda (&rest _) t)))
+    (apply fun args)))
+(advice-add 'keyboard-escape-quit :around #'my-keyboard-escape-quit)
+
 (require 'delsel)
 (make-variable-buffer-local 'transient-mark-mode)
 (put 'transient-mark-mode 'permanent-local t)
