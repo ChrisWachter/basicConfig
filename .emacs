@@ -416,7 +416,7 @@
            :narrow   ?e
            :category buffer
            :state    consult--buffer-state
-           :items    ("*Messages*" "*scratch*" "*Async-native-compile-log*" "*Bookmark List*" "*Backtrace*"))))
+           :items    ("*Messages*" "*scratch*" "*Bookmark List*"))))
 
   (setq consult-buffer-filter
     '("\\` "
@@ -427,6 +427,7 @@
       "\\`\\*Bookmark List\\*\\'"
       "\\`\\*Flymake log\\*\\'"
       "\\`\\*Backtrace\\*\\'"
+      "\\`\\*EGLOT.*\\*\\'"
       "\\`\\*tramp/.*\\*\\'"))
 )
 
@@ -589,6 +590,28 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (show-smartparens-global-mode t)
   (setq sp-autoescape-string-quote nil))
 
+(use-package eldoc-box
+  :ensure t
+  :config
+  (defun my/eldoc-box-scroll-up ()
+    "Scroll up in `eldoc-box--frame'"
+    (interactive)
+    (with-current-buffer eldoc-box--buffer
+      (with-selected-frame eldoc-box--frame
+        (scroll-down 3))))
+  (defun my/eldoc-box-scroll-down ()
+    "Scroll down in `eldoc-box--frame'"
+    (interactive)
+    (with-current-buffer eldoc-box--buffer
+      (with-selected-frame eldoc-box--frame
+        (scroll-up 3))))
+  :bind
+  (("M-h" . eldoc-box-eglot-help-at-point)))
+
+(setq eldoc-echo-area-use-multiline-p nil)
+(with-eval-after-load 'eglot
+  (setq eglot-put-doc-in-help-buffer nil))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'cc-mode)
@@ -607,7 +630,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 (add-hook 'python-mode-hook
   '(lambda ()
     (define-key python-mode-map (kbd "<backtab>") 'shift-left)))
-(add-hook 'python-mode-hook (lambda () (infer-indentation-style))) 
+(add-hook 'python-mode-hook (lambda () (infer-indentation-style)))
 
 (add-hook 'yaml-mode-hook (lambda () (infer-indentation-style))) 
 
@@ -618,6 +641,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   '(lambda ()
     (define-key clojure-mode-map (kbd "<backtab>") 'shift-left)))
 (add-hook 'clojure-mode-hook (lambda () (infer-indentation-style)))
+
 
 ;;;;
 
