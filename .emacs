@@ -425,7 +425,8 @@
       "\\`\\*Messages\\*\\'"
       "\\`\\*Async-native-compile-log\\*\\'"
       "\\`\\*Bookmark List\\*\\'"
-      "\\`\\*Flymake log\\*\\'"
+      "\\`\\*Flymake.*\\*\\'"
+      "\\`\\*Flycheck.*\\*\\'"
       "\\`\\*Backtrace\\*\\'"
       "\\`\\*EGLOT.*\\*\\'"
       "\\`\\*tramp/.*\\*\\'"))
