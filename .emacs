@@ -658,26 +658,6 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (when (fboundp 'auto-dim-other-buffers-mode)
     (auto-dim-other-buffers-mode t))))
 
-(defun toggle-theme ()
- (interactive)
- (if buffer-read-only
-     (progn
-      (load-theme 'cyberpunk t)
-      (setq my-cur-theme 'cyberpunk))
-  (progn
-   (load-theme 'clues t)
-   (setq my-cur-theme 'clues))))
-
-(defun toggle-theme-on-readonly-switch ()
-  (interactive)
-  (progn
-    (disable-theme 'my-cur-theme)
-    (if (equal buffer-read-only nil)
-      (setq buffer-read-only t)
-      (setq buffer-read-only nil))
-    (toggle-theme)))
-(global-set-key (kbd "C-x C-q") 'toggle-theme-on-readonly-switch)
-
 (add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 140))
 
@@ -687,6 +667,38 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (face-remap-add-relative 'default :family "VictorMono Nerd Font" :height 110 :weight 'semi-bold)
   (face-remap-add-relative 'mode-line :family "Hack Nerd Font" :height 80 :weight 'semi-bold)
   (face-remap-add-relative 'mode-line-inactive :family "Hack Nerd Font" :height 80 :weight 'extra-light :slant 'italic))
+
+;;
+
+(defvar my/read-only-face-cookies nil
+  "Buffer-local cookies for face remapping in read-only buffers.")
+(make-variable-buffer-local 'my/read-only-face-cookies)
+
+(defun my/update-read-only-appearance ()
+  "Apply custom background and mode-line colors when buffer is read-only."
+  ;; Clear any existing remappings first
+  (mapc #'face-remap-remove-relative my/read-only-face-cookies)
+  (setq my/read-only-face-cookies nil)
+  ;; Apply new faces if buffer-read-only is active
+  (when buffer-read-only
+    (setq my/read-only-face-cookies
+          (list
+           ;; Subtle tint for the buffer background
+           (face-remap-add-relative 'default :background "#222232")
+           ;; Distinct mode-line color as an extra visual cue
+           (face-remap-add-relative 'mode-line :foreground "#171732" :background "#cc9999")))))
+
+(defun my/watch-read-only (symbol newval operation where)
+  (when (and (eq operation 'set) (bufferp where))
+    (with-current-buffer where
+      (force-mode-line-update))))
+
+(add-variable-watcher 'buffer-read-only #'my/watch-read-only)
+
+(add-hook 'read-only-mode-hook #'my/update-read-only-appearance)
+(add-hook 'read-only-mode-hook #'force-mode-line-update t)  ;; This still doesn't work quite right
+
+;;
 
 (add-hook 'font-lock-mode-hook 'my-basic-faces-setup-hook)
 
